@@ -1,4 +1,4 @@
-# samse-contracts
+# contract-analyzer
 
 Automated extraction of key clauses from supplier contracts.
 
