@@ -1,50 +1,31 @@
 # samse-contracts
 
-Extraction automatique de clauses clés depuis des contrats fournisseurs PDF. Génère un rapport HTML avec points de vigilance identifiés par IA.
+Automated extraction of key clauses from supplier contracts.
 
-## Ce que ça fait
+## What it does
 
-1. Lit les PDFs de contrats fournisseurs
-2. Extrait via LLM (Claude) les clauses structurées :
-   - Parties, dates, montant
-   - Conditions de paiement, révision de prix
-   - Pénalités de retard, conditions de résiliation
-   - Garanties et alertes DAF
-3. Génère un rapport HTML avec cartes par fournisseur + points de vigilance
+Given a set of supplier PDF contracts, the tool extracts the information a CFO or legal team actually needs: parties involved, contract dates, amounts, penalties, renewal and termination conditions.
 
-## Utilisation
+The output is a structured HTML report with a flagged list of items that warrant attention — unusual clauses, missing fields, tight deadlines, or high-risk penalty terms.
 
-```bash
-# Setup
-uv sync
-cp .env.example .env  # remplir OPENROUTER_API_KEY
+## How it works
 
-# Analyser un dossier de contrats
-uv run python analyze.py demo_contracts/ output/
-# → ouvrir output/rapport-contrats-*.html
+1. PDFs are parsed and the text is extracted
+2. A language model (Claude via OpenRouter) reads each contract and returns structured data in a defined format
+3. The tool applies a set of rules to identify points of vigilance
+4. An HTML report is generated, readable without any technical knowledge
 
-# Analyser un seul contrat
-uv run python analyze.py demo_contracts/contrat-rockwool-france-2025.pdf output/
-```
+## Stack
 
-## Format de sortie
+- Python
+- pdfplumber for text extraction
+- Claude (via OpenRouter) for structured extraction
+- HTML report output
 
-Pour chaque contrat :
-- Fournisseur / Acheteur / Période
-- Montant total et conditions de paiement
-- Clause de révision tarifaire
-- Pénalités de retard (fournisseur et acheteur)
-- Conditions de résiliation
-- Garanties produits
-- **Points de vigilance** : alertes concrètes pour le DAF (tacite reconduction, seuils RFA, réserve de propriété...)
+## Use case
 
-## Architecture
+Designed for finance and legal teams who need to review large volumes of supplier contracts quickly. The tool does not replace legal review — it surfaces the key data so humans can focus their attention.
 
-```
-analyze.py          → CLI entry point
-contracts/
-  loader.py         → lecture PDF (pdfplumber)
-  extractor.py      → extraction LLM via OpenRouter
-  reporter.py       → rapport HTML
-demo_contracts/     → 7 contrats fournisseurs de démonstration
-```
+## Author
+
+Sonam — [github.com/scrumier](https://github.com/scrumier)
