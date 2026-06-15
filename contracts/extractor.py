@@ -11,7 +11,7 @@ Extrais les clauses clés du contrat fourni et retourne UNIQUEMENT un objet JSON
 Structure exacte à retourner :
 {
   "fournisseur": "nom du fournisseur",
-  "acheteur": "nom de l'acheteur (SAMSE ou groupe)",
+  "acheteur": "nom de l'acheteur (ACME ou groupe)",
   "date_debut": "JJ/MM/AAAA ou null",
   "date_fin": "JJ/MM/AAAA ou null",
   "montant_total": "montant en € ou null si non spécifié",

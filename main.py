@@ -1,5 +1,5 @@
 def main():
-    print("Hello from samse-contracts!")
+    print("Hello from contract-analyzer!")
 
 
 if __name__ == "__main__":

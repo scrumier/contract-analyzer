@@ -605,7 +605,7 @@ wheels = [
 ]
 
 [[package]]
-name = "samse-contracts"
+name = "contract-analyzer"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [

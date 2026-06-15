@@ -9,7 +9,7 @@ from contracts.reporter import generate_report
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Analyse contrats fournisseurs SAMSE")
+    parser = argparse.ArgumentParser(description="Analyse contrats fournisseurs ACME")
     parser.add_argument("input", help="Dossier contenant les PDFs ou chemin vers un seul PDF")
     parser.add_argument("output", help="Dossier de sortie")
     args = parser.parse_args()
