@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Analyse contrats fournisseurs, {{ generated_at.strftime('%d/%m/%Y') }}</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: system-ui, sans-serif;
+    background: #f9fafb;
+    color: #1f2937;
+    padding: 32px;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  h1 { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+  .meta { font-size: 13px; color: #6b7280; margin-bottom: 28px; }
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .stat {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 16px 20px;
+  }
+  .stat h3 {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #9ca3af;
+    margin-bottom: 6px;
+  }
+  .stat p { font-size: 26px; font-weight: 700; }
+  .stat.warn { border-left: 4px solid #f59e0b; }
+  .stat.bad { border-left: 4px solid #ef4444; }
+  .card {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card.error { border-left: 4px solid #ef4444; }
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 2px;
+  }
+  .card-title { font-size: 15px; font-weight: 600; }
+  .filename { font-size: 11px; color: #9ca3af; }
+  .period { font-size: 12px; color: #6b7280; margin-bottom: 10px; }
+  table { width: 100%; border-collapse: collapse; }
+  td { padding: 4px 0; font-size: 13px; vertical-align: top; }
+  td.label { color: #6b7280; font-size: 12px; width: 180px; }
+  .findings { margin-top: 14px; }
+  .finding {
+    border-radius: 6px;
+    padding: 8px 12px;
+    margin-top: 6px;
+    font-size: 13px;
+    border: 1px solid;
+  }
+  .finding.high { background: #fef2f2; border-color: #fecaca; color: #991b1b; }
+  .finding.medium { background: #fffbeb; border-color: #fde68a; color: #92400e; }
+  .finding .detail { font-size: 12px; opacity: .85; }
+  .opinion {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: #f9fafb;
+    border: 1px dashed #d1d5db;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #4b5563;
+  }
+  .opinion h4 { font-size: 11px; text-transform: uppercase; letter-spacing: .5px; color: #9ca3af; }
+  .opinion ul { margin-top: 6px; padding-left: 18px; }
+  .opinion li { margin-top: 3px; }
+  .error-detail { font-size: 13px; color: #991b1b; margin-top: 4px; }
+  .legend { font-size: 12px; color: #9ca3af; margin-top: 28px; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<h1>Analyse contrats fournisseurs</h1>
+<p class="meta">
+  Généré le {{ generated_at.strftime('%d/%m/%Y à %H:%M') }},
+  {{ total }} contrat{{ 's' if total > 1 }} analysé{{ 's' if total > 1 }}
+</p>
+
+<div class="stats">
+  <div class="stat"><h3>Contrats analysés</h3><p>{{ total }}</p></div>
+  <div class="stat warn"><h3>Points relevés</h3><p>{{ finding_count }}</p></div>
+  <div class="stat bad"><h3>Échecs d'extraction</h3><p>{{ error_count }}</p></div>
+</div>
+
+{% for result in results %}
+<div class="card{{ ' error' if result.error }}">
+  <div class="card-header">
+    <span class="card-title">{{ result.title }}</span>
+    <span class="filename">{{ result.filename }}</span>
+  </div>
+
+  {% if result.error %}
+  <p class="error-detail">Extraction échouée : {{ result.error }}</p>
+  {% else %}
+
+  {% if result.period %}<p class="period">{{ result.period }}</p>{% endif %}
+
+  <table>
+    {% for label, value in result.rows %}
+    <tr><td class="label">{{ label }}</td><td>{{ value }}</td></tr>
+    {% endfor %}
+  </table>
+
+  {% if result.findings %}
+  <div class="findings">
+    {% for finding in result.findings %}
+    <div class="finding {{ finding.severity }}">
+      <strong>{{ finding.label }}</strong>
+      <div class="detail">{{ finding.detail }}</div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  {% if result.contract and result.contract.alertes %}
+  <div class="opinion">
+    <h4>Remarques du modèle (non vérifiées)</h4>
+    <ul>
+      {% for alerte in result.contract.alertes %}<li>{{ alerte }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  {% endif %}
+</div>
+{% endfor %}
+
+<p class="legend">
+  Les points relevés viennent de règles fixes appliquées aux clauses extraites :
+  délai de paiement au-dessus du plafond légal (code de commerce, art. L441-10),
+  contrat expiré ou arrivant à échéance sous 90 jours, absence de clause de
+  résiliation, de révision des prix ou de pénalités de retard. Les remarques du
+  modèle sont affichées séparément parce que rien ne les vérifie.
+</p>
+
+</body>
+</html>
