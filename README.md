@@ -1,6 +1,6 @@
 # contract-analyzer
 
-**Problem:** nobody actually reads the 40-page supplier contracts. Until the penalty clause does.
+**Problem:** nobody actually reads the 40-page supplier contracts. Until the penalty clause does.<br>
 **Solution:** get back the parties, dates, amounts, penalties and termination terms, with the risky clauses flagged.
 
 Output is an HTML report anyone can read.
