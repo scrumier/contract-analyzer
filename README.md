@@ -1,31 +1,34 @@
 # contract-analyzer
 
-Automated extraction of key clauses from supplier contracts.
+**Problem:** nobody actually reads the 40-page supplier contracts. Until the penalty clause does.
+**Solution:** get back the parties, dates, amounts, penalties and termination terms, with the risky clauses flagged.
 
-## What it does
+Output is an HTML report anyone can read.
 
-Given a set of supplier PDF contracts, the tool extracts the information a CFO or legal team actually needs: parties involved, contract dates, amounts, penalties, renewal and termination conditions.
+## Run it
 
-The output is a structured HTML report with a flagged list of items that warrant attention — unusual clauses, missing fields, tight deadlines, or high-risk penalty terms.
+```bash
+cp .env.example .env    # add your OPENROUTER_API_KEY
+uv sync
+uv run python analyze.py demo_contracts/ output/
+```
+
+Demo contracts are included. Point it at your own folder, or at a single PDF.
 
 ## How it works
 
-1. PDFs are parsed and the text is extracted
-2. A language model (Claude via OpenRouter) reads each contract and returns structured data in a defined format
-3. The tool applies a set of rules to identify points of vigilance
-4. An HTML report is generated, readable without any technical knowledge
+pdfplumber pulls the text, Claude returns structured fields for each contract, then fixed rules decide what deserves attention: auto-renewal about to trigger, penalty above threshold, missing notice period, empty field where there should be a date.
 
-## Stack
+The flags come from rules, not from the model's opinion. You can always check why something was flagged.
 
-- Python
-- pdfplumber for text extraction
-- Claude (via OpenRouter) for structured extraction
-- HTML report output
+## What it won't do
 
-## Use case
+This is not legal review. It tells you where to look, not what to sign.
 
-Designed for finance and legal teams who need to review large volumes of supplier contracts quickly. The tool does not replace legal review — it surfaces the key data so humans can focus their attention.
+## This is the level 1
 
-## Author
+It works on a folder of PDFs you gathered yourself.
 
-Sonam — [github.com/scrumier](https://github.com/scrumier)
+The version that actually saves money is the one plugged into where the contracts already live, that warns you 60 days before a renewal fires instead of the day you remember to run it. Building that around your stack is what I do.
+
+[LinkedIn](https://www.linkedin.com/in/sonam-crumiere) · [sonam.me](https://sonam.me)
