@@ -7,6 +7,17 @@ Output is an HTML report anyone can read.
 
 ## Run it
 
+The short way, with any coding agent:
+
+```bash
+claude          # or codex, or whatever you run
+> set this up for me
+```
+
+It reads `AGENTS.md`, installs what is missing, asks you for the one key it
+cannot invent, and hands back the command that starts it.
+
+The manual way:
 ```bash
 cp .env.example .env    # add your OPENROUTER_API_KEY
 make setup
